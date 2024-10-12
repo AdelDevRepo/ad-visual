@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.670.0",
+    "@aws-sdk/client-dynamodb": "^3.670.0",
+    "@aws-sdk/client-s3": "^3.670.0",
+    "@aws-sdk/lib-dynamodb": "^3.670.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.39.0",
+    "serverless-webpack": "^5.14.2",
+    "webpack": "^5.95.0",
+    "webpack-node-externals": "^3.0.0"
+  }
+}

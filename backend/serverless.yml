@@ -1,0 +1,67 @@
+service: ai-image-gallery
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    BUCKET_NAME: ai-image-gallery-${self:provider.stage}-ad-visual
+    TABLE_NAME: ai-image-gallery-${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:Scan
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_NAME}
+    - Effect: Allow
+      Action:
+        - bedrock:InvokeModel
+      Resource: "*"
+
+functions:
+  generateImage:
+    handler: handler.generateImage
+    events:
+      - http:
+          path: generate
+          method: post
+          cors: true
+  searchImages:
+    handler: handler.searchImages
+    events:
+      - http:
+          path: search
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    ImageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.BUCKET_NAME}
+    ImageTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: true

@@ -1,0 +1,16 @@
+{
+  "name": "ai-image-gallery",
+  "version": "1.0.0",
+  "description": "AI-powered image generation and search application",
+  "scripts": {
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "start:backend": "cd backend && serverless offline",
+    "start:frontend": "cd frontend && npm start",
+    "deploy:backend": "cd backend && serverless deploy",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "author": "",
+  "license": "ISC"
+}
