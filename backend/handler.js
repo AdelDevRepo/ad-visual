@@ -33,7 +33,7 @@ exports.generateImage = async (event) => {
       }),
       contentType: "application/json",
       accept: "application/json",
-      modelId: "amazon.titan-image-generator-v1",
+      modelId: "amazon.titan-image-generator-v2:0",
     };
 
     const command = new InvokeModelCommand(params);
