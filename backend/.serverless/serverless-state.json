@@ -6,7 +6,7 @@
     },
     "provider": {
       "name": "aws",
-      "runtime": "nodejs18.x",
+      "runtime": "nodejs20.x",
       "stage": "dev",
       "region": "us-east-1",
       "environment": {
@@ -218,10 +218,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/ai-image-gallery/dev/1728766983220-2024-10-12T21:03:03.220Z/ai-image-gallery.zip"
+                "S3Key": "serverless/ai-image-gallery/dev/1728834557457-2024-10-13T15:49:17.457Z/ai-image-gallery.zip"
               },
               "Handler": "handler.generateImage",
-              "Runtime": "nodejs18.x",
+              "Runtime": "nodejs20.x",
               "FunctionName": "ai-image-gallery-dev-generateImage",
               "MemorySize": 1024,
               "Timeout": 6,
@@ -249,10 +249,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/ai-image-gallery/dev/1728766983220-2024-10-12T21:03:03.220Z/ai-image-gallery.zip"
+                "S3Key": "serverless/ai-image-gallery/dev/1728834557457-2024-10-13T15:49:17.457Z/ai-image-gallery.zip"
               },
               "Handler": "handler.searchImages",
-              "Runtime": "nodejs18.x",
+              "Runtime": "nodejs20.x",
               "FunctionName": "ai-image-gallery-dev-searchImages",
               "MemorySize": 1024,
               "Timeout": 6,
@@ -273,24 +273,24 @@
               "SearchImagesLogGroup"
             ]
           },
-          "GenerateImageLambdaVersionUP7XClzPWv0gwYrtxcyxaY6eFjd7KHOyRlqz2OEVg": {
+          "GenerateImageLambdaVersion3joDZL1hPgGrabsE4IxJ3D2y8GUURQIvQBvL5CkKs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateImageLambdaFunction"
               },
-              "CodeSha256": "Bk7Q2zdmlM4+kXce1BcwxUtpRxu+Ry3BzXeYTyIXbDQ="
+              "CodeSha256": "zVLLeoFExHIfMjPdZisZcVH8RpULJUHYuJ3H0+Q0jwE="
             }
           },
-          "SearchImagesLambdaVersione6fxB7yhkN3Kv9wQbODDw3Wls7aehIwjHxLx1Xc": {
+          "SearchImagesLambdaVersionV1IOtFsOqYfJNlVOlLqvnhbVrMdfNkfIMgdfvjti940": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SearchImagesLambdaFunction"
               },
-              "CodeSha256": "Bk7Q2zdmlM4+kXce1BcwxUtpRxu+Ry3BzXeYTyIXbDQ="
+              "CodeSha256": "zVLLeoFExHIfMjPdZisZcVH8RpULJUHYuJ3H0+Q0jwE="
             }
           },
           "ApiGatewayRestApi": {
@@ -517,7 +517,7 @@
               "SearchImagesLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1728766972195": {
+          "ApiGatewayDeployment1728834546174": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -644,7 +644,7 @@
           "GenerateImageLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateImageLambdaVersionUP7XClzPWv0gwYrtxcyxaY6eFjd7KHOyRlqz2OEVg"
+              "Ref": "GenerateImageLambdaVersion3joDZL1hPgGrabsE4IxJ3D2y8GUURQIvQBvL5CkKs"
             },
             "Export": {
               "Name": "sls-ai-image-gallery-dev-GenerateImageLambdaFunctionQualifiedArn"
@@ -653,7 +653,7 @@
           "SearchImagesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SearchImagesLambdaVersione6fxB7yhkN3Kv9wQbODDw3Wls7aehIwjHxLx1Xc"
+              "Ref": "SearchImagesLambdaVersionV1IOtFsOqYfJNlVOlLqvnhbVrMdfNkfIMgdfvjti940"
             },
             "Export": {
               "Name": "sls-ai-image-gallery-dev-SearchImagesLambdaFunctionQualifiedArn"
@@ -816,9 +816,9 @@
         },
         "memory": 1024,
         "timeout": 6,
-        "runtime": "nodejs18.x",
+        "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "GenerateImageLambdaVersionUP7XClzPWv0gwYrtxcyxaY6eFjd7KHOyRlqz2OEVg"
+        "versionLogicalId": "GenerateImageLambdaVersion3joDZL1hPgGrabsE4IxJ3D2y8GUURQIvQBvL5CkKs"
       },
       "searchImages": {
         "handler": "handler.searchImages",
@@ -854,9 +854,9 @@
         },
         "memory": 1024,
         "timeout": 6,
-        "runtime": "nodejs18.x",
+        "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "SearchImagesLambdaVersione6fxB7yhkN3Kv9wQbODDw3Wls7aehIwjHxLx1Xc"
+        "versionLogicalId": "SearchImagesLambdaVersionV1IOtFsOqYfJNlVOlLqvnhbVrMdfNkfIMgdfvjti940"
       }
     },
     "resources": {
@@ -913,7 +913,7 @@
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/ai-image-gallery/dev/1728766983220-2024-10-12T21:03:03.220Z",
+    "artifactDirectoryName": "serverless/ai-image-gallery/dev/1728834557457-2024-10-13T15:49:17.457Z",
     "artifact": ""
   }
 }
