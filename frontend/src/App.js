@@ -35,11 +35,14 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [generatedImage, setGeneratedImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState(null);
+  const [searchLastEvaluatedKey, setSearchLastEvaluatedKey] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [searchHasMore, setSearchHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -70,24 +73,19 @@ function App() {
     setIsGenerating(false);
   };
 
-  const fetchGalleryImages = async (resetGallery = false) => {
+  const fetchGalleryImages = async (reset = false) => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/search`, {
+      const response = await axios.get(`${API_URL}/gallery`, {
         params: {
-          term: searchTerm,
-          page: resetGallery ? 1 : page,
           limit: 10,
-          lastEvaluatedKey: resetGallery ? null : lastEvaluatedKey
+          lastEvaluatedKey: reset ? null : lastEvaluatedKey
         }
       });
       const newImages = response.data.items;
-      setGalleryImages(prevImages => resetGallery ? newImages : [...prevImages, ...newImages]);
-      setHasMore(response.data.hasMore);
+      setGalleryImages(prevImages => reset ? newImages : [...prevImages, ...newImages]);
       setLastEvaluatedKey(response.data.lastEvaluatedKey);
-      if (resetGallery) {
-        setPage(1);
-      }
+      setHasMore(response.data.hasMore);
     } catch (err) {
       console.error(err);
       toast({
@@ -101,14 +99,46 @@ function App() {
     setIsLoading(false);
   };
 
+  const searchImages = async (reset = false) => {
+    setIsSearching(true);
+    try {
+      const response = await axios.get(`${API_URL}/search`, {
+        params: {
+          term: searchTerm,
+          limit: 10,
+          lastEvaluatedKey: reset ? null : searchLastEvaluatedKey
+        }
+      });
+      const newImages = response.data.items;
+      setSearchResults(prevResults => reset ? newImages : [...prevResults, ...newImages]);
+      setSearchLastEvaluatedKey(response.data.lastEvaluatedKey);
+      setSearchHasMore(response.data.hasMore);
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: 'Error searching images',
+        description: 'An unexpected error occurred while searching images',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setIsSearching(false);
+  };
+
   useEffect(() => {
     fetchGalleryImages(true);
-  }, [searchTerm]);
+  }, []);
 
-  const loadMoreImages = () => {
+  const loadMoreGalleryImages = () => {
     if (hasMore) {
-      setPage(prevPage => prevPage + 1);
       fetchGalleryImages();
+    }
+  };
+
+  const loadMoreSearchResults = () => {
+    if (searchHasMore) {
+      searchImages();
     }
   };
 
@@ -190,12 +220,12 @@ function App() {
                         <IconButton
                           aria-label="Search images"
                           icon={<SearchIcon />}
-                          onClick={() => fetchGalleryImages(true)}
+                          onClick={() => searchImages(true)}
                         />
                       </Stack>
                       <SimpleGrid columns={[1, 2, 3]} spacing={4} width="100%">
                         <AnimatePresence>
-                          {galleryImages.map((image) => (
+                          {(searchTerm ? searchResults : galleryImages).map((image) => (
                             <MotionBox
                               key={image.id}
                               initial={{ opacity: 0, scale: 0.9 }}
@@ -219,15 +249,28 @@ function App() {
                           ))}
                         </AnimatePresence>
                       </SimpleGrid>
-                      {hasMore && (
-                        <Button
-                          onClick={loadMoreImages}
-                          isLoading={isLoading}
-                          loadingText="Loading"
-                          colorScheme="blue"
-                        >
-                          Show More
-                        </Button>
+                      {searchTerm ? (
+                        searchHasMore && (
+                          <Button
+                            onClick={loadMoreSearchResults}
+                            isLoading={isSearching}
+                            loadingText="Loading"
+                            colorScheme="blue"
+                          >
+                            Show More
+                          </Button>
+                        )
+                      ) : (
+                        hasMore && (
+                          <Button
+                            onClick={loadMoreGalleryImages}
+                            isLoading={isLoading}
+                            loadingText="Loading"
+                            colorScheme="blue"
+                          >
+                            Show More
+                          </Button>
+                        )
                       )}
                     </VStack>
                   </MotionBox>
