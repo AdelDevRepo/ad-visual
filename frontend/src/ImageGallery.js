@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text, useColorModeValue, AspectRatio } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -33,14 +33,16 @@ const ImageGallery = ({ images }) => {
               onClick={() => handleImageClick(image)}
               cursor="pointer"
             >
-              <LazyLoadImage
-                src={image.imageUrl}
-                alt={image.prompt}
-                effect="blur"
-                width="100%"
-                height="200px"
-                style={{ objectFit: 'cover', borderRadius: '0.375rem' }}
-              />
+              <AspectRatio ratio={1}>
+                <LazyLoadImage
+                  src={image.imageUrl}
+                  alt={image.prompt}
+                  effect="blur"
+                  width="100%"
+                  height="100%"
+                  style={{ objectFit: 'cover', borderRadius: '0.375rem' }}
+                />
+              </AspectRatio>
             </MotionBox>
           ))}
         </AnimatePresence>
