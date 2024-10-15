@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react';
+import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MotionBox = motion(Box);
@@ -46,7 +46,7 @@ const ImageGallery = ({ images }) => {
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <ModalBody p={0}>
+          <ModalBody p={0} position="relative">
             <Image
               src={selectedImage?.imageUrl}
               alt={selectedImage?.prompt}
@@ -55,6 +55,18 @@ const ImageGallery = ({ images }) => {
               h="auto"
               maxH="80vh"
             />
+            <Box
+              position="absolute"
+              bottom="4"
+              right="4"
+              bg="rgba(255, 255, 255, 0.8)"
+              color="black"
+              p="2"
+              borderRadius="md"
+              maxW="80%"
+            >
+              <Text fontSize="sm">{selectedImage?.prompt}</Text>
+            </Box>
           </ModalBody>
         </ModalContent>
       </Modal>
