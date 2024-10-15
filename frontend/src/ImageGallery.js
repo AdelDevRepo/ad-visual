@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text, useColorModeValue } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const MotionBox = motion(Box);
 
@@ -31,13 +33,13 @@ const ImageGallery = ({ images }) => {
               onClick={() => handleImageClick(image)}
               cursor="pointer"
             >
-              <Image
+              <LazyLoadImage
                 src={image.imageUrl}
                 alt={image.prompt}
-                objectFit="cover"
-                w="100%"
-                h="200px"
-                borderRadius="md"
+                effect="blur"
+                width="100%"
+                height="200px"
+                style={{ objectFit: 'cover', borderRadius: '0.375rem' }}
               />
             </MotionBox>
           ))}

@@ -24,6 +24,7 @@ import {
 import { SunIcon, MoonIcon, SearchIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import ImageGallery from './ImageGallery';
+import { getFromCache, setInCache } from './utils/cache';
 
 const API_URL = 'https://duqypsrtg1.execute-api.us-east-1.amazonaws.com/dev';
 
@@ -69,6 +70,15 @@ function App() {
 
   const fetchGalleryImages = async (reset = false) => {
     setIsLoading(true);
+    const cacheKey = `gallery_${searchTerm}_${lastEvaluatedKey}`;
+    const cachedImages = getFromCache(cacheKey);
+
+    if (cachedImages && !reset) {
+      setGalleryImages(prevImages => [...prevImages, ...cachedImages]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.get(`${API_URL}/gallery`, {
         params: {
@@ -81,6 +91,7 @@ function App() {
       setGalleryImages(prevImages => reset ? newImages : [...prevImages, ...newImages]);
       setLastEvaluatedKey(response.data.lastEvaluatedKey);
       setHasMore(response.data.hasMore);
+      setInCache(cacheKey, newImages);
     } catch (err) {
       console.error(err);
       toast({
