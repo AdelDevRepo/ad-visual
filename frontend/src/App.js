@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  ChakraProvider,
   Box,
   VStack,
   Heading,
@@ -106,106 +105,104 @@ function App() {
   };
 
   return (
-    <ChakraProvider>
-      <Box minHeight="100vh" bg={bgColor} py={8}>
-        <Container maxW="container.xl">
-          <VStack spacing={8}>
-            <Flex width="100%" justifyContent="space-between" alignItems="center">
-              <Heading as="h1" size={["xl", "2xl"]}>AI Image Gallery</Heading>
-              <IconButton
-                icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-                onClick={toggleColorMode}
-                aria-label="Toggle color mode"
-              />
-            </Flex>
-            
-            <Tabs isFitted variant="enclosed" width="100%">
-              <TabList mb="1em">
-                <Tab>Generate Image</Tab>
-                <Tab>Image Gallery</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <MotionBox
-                    width="100%"
-                    bg={cardBgColor}
-                    p={[4, 6]}
-                    borderRadius="md"
-                    boxShadow="md"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <VStack spacing={4}>
-                      <Stack spacing={4} direction={["column", "row"]} width="100%">
-                        <Input
-                          placeholder="Enter a prompt to generate an image"
-                          value={prompt}
-                          onChange={(e) => setPrompt(e.target.value)}
-                          flex={1}
-                        />
-                        <Button 
-                          onClick={generateImage} 
-                          colorScheme="blue" 
-                          isLoading={isGenerating} 
-                          loadingText="Generating"
-                          isDisabled={!prompt}
-                        >
-                          Generate
-                        </Button>
-                      </Stack>
-                      {isGenerating && <Spinner />}
-                      {generatedImage && (
-                        <Image src={generatedImage} alt="Generated image" maxH="300px" objectFit="contain" />
-                      )}
-                    </VStack>
-                  </MotionBox>
-                </TabPanel>
-                <TabPanel>
-                  <MotionBox
-                    width="100%"
-                    bg={cardBgColor}
-                    p={[4, 6]}
-                    borderRadius="md"
-                    boxShadow="md"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                  >
-                    <VStack spacing={4}>
-                      <Stack spacing={4} direction={["column", "row"]} width="100%">
-                        <Input
-                          placeholder="Search images"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          flex={1}
-                        />
-                        <IconButton
-                          aria-label="Search images"
-                          icon={<SearchIcon />}
-                          onClick={() => fetchGalleryImages(true)}
-                        />
-                      </Stack>
-                      <ImageGallery images={galleryImages} />
-                      {hasMore && (
-                        <Button
-                          onClick={loadMoreImages}
-                          isLoading={isLoading}
-                          loadingText="Loading"
-                          colorScheme="blue"
-                        >
-                          Show More
-                        </Button>
-                      )}
-                    </VStack>
-                  </MotionBox>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </VStack>
-        </Container>
-      </Box>
-    </ChakraProvider>
+    <Box minHeight="100vh" bg={bgColor} py={8}>
+      <Container maxW="container.xl">
+        <VStack spacing={8}>
+          <Flex width="100%" justifyContent="space-between" alignItems="center">
+            <Heading as="h1" size={["xl", "2xl"]}>AI Image Gallery</Heading>
+            <IconButton
+              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+              aria-label="Toggle color mode"
+            />
+          </Flex>
+          
+          <Tabs isFitted variant="enclosed" width="100%">
+            <TabList mb="1em">
+              <Tab>Generate Image</Tab>
+              <Tab>Image Gallery</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <MotionBox
+                  width="100%"
+                  bg={cardBgColor}
+                  p={[4, 6]}
+                  borderRadius="md"
+                  boxShadow="md"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <VStack spacing={4}>
+                    <Stack spacing={4} direction={["column", "row"]} width="100%">
+                      <Input
+                        placeholder="Enter a prompt to generate an image"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        flex={1}
+                      />
+                      <Button 
+                        onClick={generateImage} 
+                        colorScheme="blue" 
+                        isLoading={isGenerating} 
+                        loadingText="Generating"
+                        isDisabled={!prompt}
+                      >
+                        Generate
+                      </Button>
+                    </Stack>
+                    {isGenerating && <Spinner />}
+                    {generatedImage && (
+                      <Image src={generatedImage} alt="Generated image" maxH="300px" objectFit="contain" />
+                    )}
+                  </VStack>
+                </MotionBox>
+              </TabPanel>
+              <TabPanel>
+                <MotionBox
+                  width="100%"
+                  bg={cardBgColor}
+                  p={[4, 6]}
+                  borderRadius="md"
+                  boxShadow="md"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <VStack spacing={4}>
+                    <Stack spacing={4} direction={["column", "row"]} width="100%">
+                      <Input
+                        placeholder="Search images"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        flex={1}
+                      />
+                      <IconButton
+                        aria-label="Search images"
+                        icon={<SearchIcon />}
+                        onClick={() => fetchGalleryImages(true)}
+                      />
+                    </Stack>
+                    <ImageGallery images={galleryImages} />
+                    {hasMore && (
+                      <Button
+                        onClick={loadMoreImages}
+                        isLoading={isLoading}
+                        loadingText="Loading"
+                        colorScheme="blue"
+                      >
+                        Show More
+                      </Button>
+                    )}
+                  </VStack>
+                </MotionBox>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </VStack>
+      </Container>
+    </Box>
   );
 }
 
