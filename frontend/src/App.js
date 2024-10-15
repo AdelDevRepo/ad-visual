@@ -8,8 +8,6 @@ import {
   Input,
   Button,
   Image,
-  Text,
-  SimpleGrid,
   Container,
   useToast,
   Spinner,
@@ -25,7 +23,8 @@ import {
   TabPanel,
 } from '@chakra-ui/react';
 import { SunIcon, MoonIcon, SearchIcon } from '@chakra-ui/icons';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import ImageGallery from './ImageGallery';
 
 const API_URL = 'https://duqypsrtg1.execute-api.us-east-1.amazonaws.com/dev';
 
@@ -35,14 +34,10 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [generatedImage, setGeneratedImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState(null);
-  const [searchLastEvaluatedKey, setSearchLastEvaluatedKey] = useState(null);
   const [hasMore, setHasMore] = useState(true);
-  const [searchHasMore, setSearchHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -78,8 +73,9 @@ function App() {
     try {
       const response = await axios.get(`${API_URL}/gallery`, {
         params: {
-          limit: 10,
-          lastEvaluatedKey: reset ? null : lastEvaluatedKey
+          limit: 20,
+          lastEvaluatedKey: reset ? null : lastEvaluatedKey,
+          term: searchTerm,
         }
       });
       const newImages = response.data.items;
@@ -99,46 +95,13 @@ function App() {
     setIsLoading(false);
   };
 
-  const searchImages = async (reset = false) => {
-    setIsSearching(true);
-    try {
-      const response = await axios.get(`${API_URL}/search`, {
-        params: {
-          term: searchTerm,
-          limit: 10,
-          lastEvaluatedKey: reset ? null : searchLastEvaluatedKey
-        }
-      });
-      const newImages = response.data.items;
-      setSearchResults(prevResults => reset ? newImages : [...prevResults, ...newImages]);
-      setSearchLastEvaluatedKey(response.data.lastEvaluatedKey);
-      setSearchHasMore(response.data.hasMore);
-    } catch (err) {
-      console.error(err);
-      toast({
-        title: 'Error searching images',
-        description: 'An unexpected error occurred while searching images',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-    setIsSearching(false);
-  };
-
   useEffect(() => {
     fetchGalleryImages(true);
-  }, []);
+  }, [searchTerm]);
 
-  const loadMoreGalleryImages = () => {
+  const loadMoreImages = () => {
     if (hasMore) {
       fetchGalleryImages();
-    }
-  };
-
-  const loadMoreSearchResults = () => {
-    if (searchHasMore) {
-      searchImages();
     }
   };
 
@@ -220,57 +183,19 @@ function App() {
                         <IconButton
                           aria-label="Search images"
                           icon={<SearchIcon />}
-                          onClick={() => searchImages(true)}
+                          onClick={() => fetchGalleryImages(true)}
                         />
                       </Stack>
-                      <SimpleGrid columns={[1, 2, 3]} spacing={4} width="100%">
-                        <AnimatePresence>
-                          {(searchTerm ? searchResults : galleryImages).map((image) => (
-                            <MotionBox
-                              key={image.id}
-                              initial={{ opacity: 0, scale: 0.9 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.9 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              <Box borderWidth={1} borderRadius="md" overflow="hidden">
-                                <Image 
-                                  src={image.imageUrl} 
-                                  alt={image.prompt} 
-                                  width="100%" 
-                                  height={["150px", "200px"]} 
-                                  objectFit="cover"
-                                />
-                                <Box p={2}>
-                                  <Text fontSize="sm">{image.prompt}</Text>
-                                </Box>
-                              </Box>
-                            </MotionBox>
-                          ))}
-                        </AnimatePresence>
-                      </SimpleGrid>
-                      {searchTerm ? (
-                        searchHasMore && (
-                          <Button
-                            onClick={loadMoreSearchResults}
-                            isLoading={isSearching}
-                            loadingText="Loading"
-                            colorScheme="blue"
-                          >
-                            Show More
-                          </Button>
-                        )
-                      ) : (
-                        hasMore && (
-                          <Button
-                            onClick={loadMoreGalleryImages}
-                            isLoading={isLoading}
-                            loadingText="Loading"
-                            colorScheme="blue"
-                          >
-                            Show More
-                          </Button>
-                        )
+                      <ImageGallery images={galleryImages} />
+                      {hasMore && (
+                        <Button
+                          onClick={loadMoreImages}
+                          isLoading={isLoading}
+                          loadingText="Loading"
+                          colorScheme="blue"
+                        >
+                          Show More
+                        </Button>
                       )}
                     </VStack>
                   </MotionBox>

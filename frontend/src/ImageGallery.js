@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text } from '@chakra-ui/react';
+import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text, useColorModeValue } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MotionBox = motion(Box);
 
 const ImageGallery = ({ images }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const bgColor = useColorModeValue("rgba(255, 255, 255, 0.8)", "rgba(0, 0, 0, 0.8)");
+  const textColor = useColorModeValue("black", "white");
 
   const handleImageClick = (image) => {
     setSelectedImage(image);
@@ -34,7 +36,7 @@ const ImageGallery = ({ images }) => {
                 alt={image.prompt}
                 objectFit="cover"
                 w="100%"
-                h="100%"
+                h="200px"
                 borderRadius="md"
               />
             </MotionBox>
@@ -44,8 +46,8 @@ const ImageGallery = ({ images }) => {
 
       <Modal isOpen={selectedImage !== null} onClose={handleCloseModal} size="xl">
         <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
+        <ModalContent bg="transparent">
+          <ModalCloseButton color="white" />
           <ModalBody p={0} position="relative">
             <Image
               src={selectedImage?.imageUrl}
@@ -59,8 +61,8 @@ const ImageGallery = ({ images }) => {
               position="absolute"
               bottom="4"
               right="4"
-              bg="rgba(255, 255, 255, 0.8)"
-              color="black"
+              bg={bgColor}
+              color={textColor}
               p="2"
               borderRadius="md"
               maxW="80%"
