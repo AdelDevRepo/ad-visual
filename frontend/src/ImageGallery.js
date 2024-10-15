@@ -47,7 +47,7 @@ const ImageGallery = ({ images }) => {
       <Modal isOpen={selectedImage !== null} onClose={handleCloseModal} size="xl">
         <ModalOverlay />
         <ModalContent bg="transparent">
-          <ModalCloseButton color="white" />
+          <ModalCloseButton color={textColor} />
           <ModalBody p={0} position="relative">
             <Image
               src={selectedImage?.imageUrl}
