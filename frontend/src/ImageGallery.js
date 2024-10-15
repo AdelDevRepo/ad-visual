@@ -32,16 +32,24 @@ const ImageGallery = ({ images }) => {
               transition={{ duration: 0.3 }}
               onClick={() => handleImageClick(image)}
               cursor="pointer"
+              className="group"
             >
               <AspectRatio ratio={1}>
-                <LazyLoadImage
-                  src={image.imageUrl}
-                  alt={image.prompt}
-                  effect="blur"
-                  width="100%"
-                  height="100%"
-                  style={{ objectFit: 'cover', borderRadius: '0.375rem' }}
-                />
+                <Box className="relative overflow-hidden rounded-lg">
+                  <LazyLoadImage
+                    src={image.imageUrl}
+                    alt={image.prompt}
+                    effect="blur"
+                    width="100%"
+                    height="100%"
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <Box
+                    className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity duration-300 flex items-end justify-center opacity-0 group-hover:opacity-100"
+                  >
+                    <Text className="text-white text-sm p-2 text-center">{image.prompt}</Text>
+                  </Box>
+                </Box>
               </AspectRatio>
             </MotionBox>
           ))}
@@ -49,31 +57,40 @@ const ImageGallery = ({ images }) => {
       </SimpleGrid>
 
       <Modal isOpen={selectedImage !== null} onClose={handleCloseModal} size="xl">
-        <ModalOverlay />
+        <ModalOverlay className="backdrop-blur-sm" />
         <ModalContent bg="transparent">
-          <ModalCloseButton color={textColor} />
-          <ModalBody p={0} position="relative">
-            <Image
-              src={selectedImage?.imageUrl}
-              alt={selectedImage?.prompt}
-              objectFit="contain"
-              w="100%"
-              h="auto"
-              maxH="80vh"
-            />
-            <Box
-              position="absolute"
-              bottom="4"
-              right="4"
-              bg={bgColor}
-              color={textColor}
-              p="2"
-              borderRadius="md"
-              maxW="80%"
-            >
-              <Text fontSize="sm">{selectedImage?.prompt}</Text>
-            </Box>
-          </ModalBody>
+          <ModalCloseButton color={textColor} className="hover:rotate-90 transition-transform duration-300" />
+          <MotionBox
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ModalBody p={0} position="relative">
+              <Image
+                src={selectedImage?.imageUrl}
+                alt={selectedImage?.prompt}
+                objectFit="contain"
+                w="100%"
+                h="auto"
+                maxH="80vh"
+                className="rounded-lg shadow-2xl"
+              />
+              <Box
+                position="absolute"
+                bottom="4"
+                right="4"
+                bg={bgColor}
+                color={textColor}
+                p="2"
+                borderRadius="md"
+                maxW="80%"
+                className="backdrop-filter backdrop-blur-md bg-opacity-70"
+              >
+                <Text fontSize="sm">{selectedImage?.prompt}</Text>
+              </Box>
+            </ModalBody>
+          </MotionBox>
         </ModalContent>
       </Modal>
     </Box>

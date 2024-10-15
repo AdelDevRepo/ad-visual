@@ -20,6 +20,8 @@ import {
   Tab,
   TabPanels,
   TabPanel,
+  InputGroup,
+  InputLeftElement,
 } from '@chakra-ui/react';
 import { SunIcon, MoonIcon, SearchIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
@@ -116,22 +118,25 @@ function App() {
   };
 
   return (
-    <Box minHeight="100vh" bg={bgColor} py={8}>
+    <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
       <Container maxW="container.xl">
         <VStack spacing={8}>
           <Flex width="100%" justifyContent="space-between" alignItems="center">
-            <Heading as="h1" size={["xl", "2xl"]}>AI Image Gallery</Heading>
+            <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
+              AI Image Gallery
+            </Heading>
             <IconButton
               icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               onClick={toggleColorMode}
               aria-label="Toggle color mode"
+              className="hover:rotate-12 transition-transform duration-300"
             />
           </Flex>
           
           <Tabs isFitted variant="enclosed" width="100%">
             <TabList mb="1em">
-              <Tab>Generate Image</Tab>
-              <Tab>Image Gallery</Tab>
+              <Tab className="hover:bg-opacity-80 transition-colors duration-300">Generate Image</Tab>
+              <Tab className="hover:bg-opacity-80 transition-colors duration-300">Image Gallery</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -144,28 +149,37 @@ function App() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
+                  className="backdrop-filter backdrop-blur-lg bg-opacity-30"
                 >
                   <VStack spacing={4}>
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
-                      <Input
-                        placeholder="Enter a prompt to generate an image"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        flex={1}
-                      />
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
+                        <Input
+                          placeholder="Enter a prompt to generate an image"
+                          value={prompt}
+                          onChange={(e) => setPrompt(e.target.value)}
+                          flex={1}
+                          className="peer placeholder-transparent"
+                        />
+                        <label className="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">
+                          Enter a prompt
+                        </label>
+                      </InputGroup>
                       <Button 
                         onClick={generateImage} 
                         colorScheme="blue" 
                         isLoading={isGenerating} 
                         loadingText="Generating"
                         isDisabled={!prompt}
+                        className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                       >
                         Generate
                       </Button>
                     </Stack>
                     {isGenerating && <Spinner />}
                     {generatedImage && (
-                      <Image src={generatedImage} alt="Generated image" maxH="300px" objectFit="contain" />
+                      <Image src={generatedImage} alt="Generated image" maxH="300px" objectFit="contain" className="rounded-lg shadow-xl" />
                     )}
                   </VStack>
                 </MotionBox>
@@ -180,19 +194,28 @@ function App() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
+                  className="backdrop-filter backdrop-blur-lg bg-opacity-30"
                 >
                   <VStack spacing={4}>
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
-                      <Input
-                        placeholder="Search images"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        flex={1}
-                      />
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
+                        <Input
+                          placeholder="Search images"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          flex={1}
+                          className="peer placeholder-transparent"
+                        />
+                        <label className="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">
+                          Search images
+                        </label>
+                      </InputGroup>
                       <IconButton
                         aria-label="Search images"
                         icon={<SearchIcon />}
                         onClick={() => fetchGalleryImages(true)}
+                        className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                       />
                     </Stack>
                     <ImageGallery images={galleryImages} />
@@ -202,6 +225,7 @@ function App() {
                         isLoading={isLoading}
                         loadingText="Loading"
                         colorScheme="blue"
+                        className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                       >
                         Show More
                       </Button>
