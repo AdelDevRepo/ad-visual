@@ -121,29 +121,29 @@ function App() {
     fetchGalleryImages(true);
   }, []);
 
-  <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
-  <Container maxW="container.xl">
-    <Flex width="100%" justifyContent="space-between" alignItems="center" mb={8}>
-      <Box flex="1" />
-      <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
-        AI Image Gallery
-      </Heading>
-      <Flex flex="1" justifyContent="flex-end">
-        <IconButton
-          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          onClick={toggleColorMode}
-          aria-label="Toggle color mode"
-          className="hover:rotate-12 transition-transform duration-300"
-        />
-      </Flex>
-    </Flex>
-        
+  return (
+    <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
+      <Container maxW="container.xl">
+        <VStack spacing={8}>
+          <Flex width="100%" justifyContent="space-between" alignItems="center" mb={8}>
+            <Box flex="1" />
+            <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
+              AI Image Gallery
+            </Heading>
+            <Flex flex="1" justifyContent="flex-end">
+              <IconButton
+                icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
+                aria-label="Toggle color mode"
+                className="hover:rotate-12 transition-transform duration-300"
+              />
+            </Flex>
+          </Flex>
           
           <Tabs isFitted variant="enclosed" width="100%">
             <TabList mb="1em">
               <Tab className="hover:bg-opacity-80 transition-colors duration-300">Generate Image</Tab>
               <Tab className="hover:bg-opacity-80 transition-colors duration-300">Image Gallery</Tab>
-            
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -161,7 +161,9 @@ function App() {
                   <VStack spacing={4}>
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
                       <InputGroup>
-                        <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
+                        <InputLeftElement pointerEvents="none">
+                          <SearchIcon color="gray.300" />
+                        </InputLeftElement>
                         <Input
                           placeholder="Enter a prompt to generate an image"
                           value={prompt}
@@ -206,7 +208,9 @@ function App() {
                   <VStack spacing={4}>
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
                       <InputGroup>
-                        <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
+                        <InputLeftElement pointerEvents="none">
+                          <SearchIcon color="gray.300" />
+                        </InputLeftElement>
                         <Input
                           placeholder="Search images"
                           value={searchTerm}
@@ -242,6 +246,7 @@ function App() {
               </TabPanel>
             </TabPanels>
           </Tabs>
+        </VStack>
       </Container>
     </Box>
   );
