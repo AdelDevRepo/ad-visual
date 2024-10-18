@@ -124,7 +124,7 @@ function App() {
   return (
     <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
       <Container maxW="container.xl">
-        <VStack spacing={8}>
+        <VStack spacing={8} align="stretch">
           <Flex width="100%" justifyContent="space-between" alignItems="center" mb={8}>
             <Box flex="1" />
             <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
@@ -158,7 +158,7 @@ function App() {
                   transition={{ duration: 0.5 }}
                   className="backdrop-filter backdrop-blur-lg bg-opacity-30"
                 >
-                  <VStack spacing={4}>
+                  <VStack spacing={4} align="stretch">
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
                       <InputGroup>
                         <InputLeftElement pointerEvents="none">
@@ -205,7 +205,7 @@ function App() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="backdrop-filter backdrop-blur-lg bg-opacity-30"
                 >
-                  <VStack spacing={4}>
+                  <VStack spacing={4} align="stretch">
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
                       <InputGroup>
                         <InputLeftElement pointerEvents="none">
@@ -229,7 +229,9 @@ function App() {
                         className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                       />
                     </Stack>
-                    <ImageGallery images={galleryImages} />
+                    <Box width="100%">
+                      <ImageGallery images={galleryImages} />
+                    </Box>
                     {hasMore && (
                       <Button
                         onClick={loadMoreImages}
