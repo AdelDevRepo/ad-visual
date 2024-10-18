@@ -22,8 +22,6 @@ import {
   TabPanel,
   InputGroup,
   InputLeftElement,
-  FormControl,
-  FormLabel,
 } from '@chakra-ui/react';
 import { SunIcon, MoonIcon, SearchIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
@@ -162,37 +160,21 @@ function App() {
                 >
                   <VStack spacing={4} align="stretch">
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
-                      <FormControl>
-                        <FormLabel htmlFor="prompt" className="sr-only">Enter a prompt</FormLabel>
-                        <InputGroup>
-                          <InputLeftElement pointerEvents="none">
-                            <SearchIcon color="gray.300" />
-                          </InputLeftElement>
-                          <Input
-                            id="prompt"
-                            placeholder="Enter a prompt to generate an image"
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            paddingLeft="2.5rem"
-                            paddingTop="1.5rem"
-                            paddingBottom="0.5rem"
-                          />
-                          <Box
-                            as="span"
-                            pointerEvents="none"
-                            color="gray.500"
-                            fontSize="sm"
-                            position="absolute"
-                            left="2.5rem"
-                            top="0.5rem"
-                            transition="all 0.2s"
-                            opacity={prompt ? 1 : 0}
-                            transform={prompt ? 'translateY(0)' : 'translateY(15px)'}
-                          >
-                            Enter a prompt
-                          </Box>
-                        </InputGroup>
-                      </FormControl>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none">
+                          <SearchIcon color="gray.300" />
+                        </InputLeftElement>
+                        <Input
+                          placeholder="Enter a prompt to generate an image"
+                          value={prompt}
+                          onChange={(e) => setPrompt(e.target.value)}
+                          flex={1}
+                          className="peer placeholder-transparent"
+                        />
+                        <label className="absolute left-10 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">
+                          Enter a prompt
+                        </label>
+                      </InputGroup>
                       <Button 
                         onClick={generateImage} 
                         colorScheme="blue" 
@@ -225,37 +207,21 @@ function App() {
                 >
                   <VStack spacing={4} align="stretch">
                     <Stack spacing={4} direction={["column", "row"]} width="100%">
-                      <FormControl>
-                        <FormLabel htmlFor="search" className="sr-only">Search images</FormLabel>
-                        <InputGroup>
-                          <InputLeftElement pointerEvents="none">
-                            <SearchIcon color="gray.300" />
-                          </InputLeftElement>
-                          <Input
-                            id="search"
-                            placeholder="Search images"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            paddingLeft="2.5rem"
-                            paddingTop="1.5rem"
-                            paddingBottom="0.5rem"
-                          />
-                          <Box
-                            as="span"
-                            pointerEvents="none"
-                            color="gray.500"
-                            fontSize="sm"
-                            position="absolute"
-                            left="2.5rem"
-                            top="0.5rem"
-                            transition="all 0.2s"
-                            opacity={searchTerm ? 1 : 0}
-                            transform={searchTerm ? 'translateY(0)' : 'translateY(15px)'}
-                          >
-                            Search images
-                          </Box>
-                        </InputGroup>
-                      </FormControl>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none">
+                          <SearchIcon color="gray.300" />
+                        </InputLeftElement>
+                        <Input
+                          placeholder="Search images"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          flex={1}
+                          className="peer placeholder-transparent pl-10"
+                        />
+                        <label className="absolute left-10 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">
+                          Search images
+                        </label>
+                      </InputGroup>
                       <IconButton
                         aria-label="Search images"
                         icon={<SearchIcon />}
