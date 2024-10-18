@@ -121,20 +121,22 @@ function App() {
     fetchGalleryImages(true);
   }, []);
 
-  return (
-    <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
-      <Container maxW="container.xl">
-        <Flex width="100%" justifyContent="center" alignItems="center" position="relative" mb={8}>
-          <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
-            AI Image Gallery
-          </Heading>
-          <IconButton
-            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-            onClick={toggleColorMode}
-            aria-label="Toggle color mode"
-            className="hover:rotate-12 transition-transform duration-300 absolute right-0 top-1/2 transform -translate-y-1/2"
-          />
-        </Flex>
+  <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
+  <Container maxW="container.xl">
+    <Flex width="100%" justifyContent="space-between" alignItems="center" mb={8}>
+      <Box flex="1" />
+      <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
+        AI Image Gallery
+      </Heading>
+      <Flex flex="1" justifyContent="flex-end">
+        <IconButton
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          onClick={toggleColorMode}
+          aria-label="Toggle color mode"
+          className="hover:rotate-12 transition-transform duration-300"
+        />
+      </Flex>
+    </Flex>
         
           
           <Tabs isFitted variant="enclosed" width="100%">
