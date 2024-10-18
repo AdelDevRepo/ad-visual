@@ -18,6 +18,7 @@ provider:
       Action:
         - dynamodb:PutItem
         - dynamodb:Scan
+        - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_NAME}
     - Effect: Allow
       Action:
@@ -39,6 +40,13 @@ functions:
           path: search
           method: get
           cors: true
+  getGalleryImages:
+    handler: handler.getGalleryImages
+    events:
+      - http:
+          path: images
+          method: get
+          cors: true
 
 resources:
   Resources:
@@ -46,6 +54,19 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.BUCKET_NAME}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              AllowedOrigins:
+                - 'https://main3.dhtmpsa6cbgbg.amplifyapp.com'
+              MaxAge: 3000
     ImageTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -53,9 +74,20 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: N
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: createdAt-index
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
 
 plugins:

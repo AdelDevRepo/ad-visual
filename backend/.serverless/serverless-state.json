@@ -26,7 +26,8 @@
           "Effect": "Allow",
           "Action": [
             "dynamodb:PutItem",
-            "dynamodb:Scan"
+            "dynamodb:Scan",
+            "dynamodb:Query"
           ],
           "Resource": "arn:aws:dynamodb:us-east-1:*:table/ai-image-gallery-dev"
         },
@@ -124,6 +125,12 @@
               "LogGroupName": "/aws/lambda/ai-image-gallery-dev-searchImages"
             }
           },
+          "GetGalleryImagesLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ai-image-gallery-dev-getGalleryImages"
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -218,7 +225,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/ai-image-gallery/dev/1728834557457-2024-10-13T15:49:17.457Z/ai-image-gallery.zip"
+                "S3Key": "serverless/ai-image-gallery/dev/1729225120356-2024-10-18T04:18:40.356Z/ai-image-gallery.zip"
               },
               "Handler": "handler.generateImage",
               "Runtime": "nodejs20.x",
@@ -249,7 +256,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/ai-image-gallery/dev/1728834557457-2024-10-13T15:49:17.457Z/ai-image-gallery.zip"
+                "S3Key": "serverless/ai-image-gallery/dev/1729225120356-2024-10-18T04:18:40.356Z/ai-image-gallery.zip"
               },
               "Handler": "handler.searchImages",
               "Runtime": "nodejs20.x",
@@ -273,24 +280,65 @@
               "SearchImagesLogGroup"
             ]
           },
-          "GenerateImageLambdaVersion3joDZL1hPgGrabsE4IxJ3D2y8GUURQIvQBvL5CkKs": {
+          "GetGalleryImagesLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ai-image-gallery/dev/1729225120356-2024-10-18T04:18:40.356Z/ai-image-gallery.zip"
+              },
+              "Handler": "handler.getGalleryImages",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "ai-image-gallery-dev-getGalleryImages",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "BUCKET_NAME": "ai-image-gallery-dev-ad-visual",
+                  "TABLE_NAME": "ai-image-gallery-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetGalleryImagesLogGroup"
+            ]
+          },
+          "GenerateImageLambdaVersionQWjmXzBbHg2MOTWYwT5CwIhPMM6L4Hclb48R9DKcn9w": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateImageLambdaFunction"
               },
-              "CodeSha256": "zVLLeoFExHIfMjPdZisZcVH8RpULJUHYuJ3H0+Q0jwE="
+              "CodeSha256": "RoIYZytNK/2GZr4T14NCPSk8vJhwLLmnmuQHglAsdWQ="
             }
           },
-          "SearchImagesLambdaVersionV1IOtFsOqYfJNlVOlLqvnhbVrMdfNkfIMgdfvjti940": {
+          "SearchImagesLambdaVersioncEqixXZVOjpCLSCj2dg4zRdRCWhUoQzKefxkTobEA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SearchImagesLambdaFunction"
               },
-              "CodeSha256": "zVLLeoFExHIfMjPdZisZcVH8RpULJUHYuJ3H0+Q0jwE="
+              "CodeSha256": "RoIYZytNK/2GZr4T14NCPSk8vJhwLLmnmuQHglAsdWQ="
+            }
+          },
+          "GetGalleryImagesLambdaVersiongMiBtlTtrOXK7vxvISuOHmRpD65osBO4ngqCoDomeTA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetGalleryImagesLambdaFunction"
+              },
+              "CodeSha256": "RoIYZytNK/2GZr4T14NCPSk8vJhwLLmnmuQHglAsdWQ="
             }
           },
           "ApiGatewayRestApi": {
@@ -330,6 +378,21 @@
                 ]
               },
               "PathPart": "search",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceImages": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "images",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -419,6 +482,51 @@
               },
               "ResourceId": {
                 "Ref": "ApiGatewayResourceSearch"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodImagesOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceImages"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -517,7 +625,53 @@
               "SearchImagesLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1728834546174": {
+          "ApiGatewayMethodImagesGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceImages"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetGalleryImagesLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "GetGalleryImagesLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1729225108146": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -528,8 +682,10 @@
             "DependsOn": [
               "ApiGatewayMethodGenerateOptions",
               "ApiGatewayMethodSearchOptions",
+              "ApiGatewayMethodImagesOptions",
               "ApiGatewayMethodGeneratePost",
-              "ApiGatewayMethodSearchGet"
+              "ApiGatewayMethodSearchGet",
+              "ApiGatewayMethodImagesGet"
             ]
           },
           "GenerateImageLambdaPermissionApiGateway": {
@@ -606,10 +762,67 @@
               }
             }
           },
+          "GetGalleryImagesLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetGalleryImagesLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
           "ImageBucket": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
-              "BucketName": "ai-image-gallery-dev-ad-visual"
+              "BucketName": "ai-image-gallery-dev-ad-visual",
+              "CorsConfiguration": {
+                "CorsRules": [
+                  {
+                    "AllowedHeaders": [
+                      "*"
+                    ],
+                    "AllowedMethods": [
+                      "GET",
+                      "PUT",
+                      "POST",
+                      "DELETE",
+                      "HEAD"
+                    ],
+                    "AllowedOrigins": [
+                      "https://main3.dhtmpsa6cbgbg.amplifyapp.com"
+                    ],
+                    "MaxAge": 3000
+                  }
+                ]
+              }
             }
           },
           "ImageTable": {
@@ -620,12 +833,34 @@
                 {
                   "AttributeName": "id",
                   "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "createdAt",
+                  "AttributeType": "N"
                 }
               ],
               "KeySchema": [
                 {
                   "AttributeName": "id",
                   "KeyType": "HASH"
+                }
+              ],
+              "GlobalSecondaryIndexes": [
+                {
+                  "IndexName": "createdAt-index",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "id",
+                      "KeyType": "HASH"
+                    },
+                    {
+                      "AttributeName": "createdAt",
+                      "KeyType": "RANGE"
+                    }
+                  ],
+                  "Projection": {
+                    "ProjectionType": "ALL"
+                  }
                 }
               ],
               "BillingMode": "PAY_PER_REQUEST"
@@ -644,7 +879,7 @@
           "GenerateImageLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateImageLambdaVersion3joDZL1hPgGrabsE4IxJ3D2y8GUURQIvQBvL5CkKs"
+              "Ref": "GenerateImageLambdaVersionQWjmXzBbHg2MOTWYwT5CwIhPMM6L4Hclb48R9DKcn9w"
             },
             "Export": {
               "Name": "sls-ai-image-gallery-dev-GenerateImageLambdaFunctionQualifiedArn"
@@ -653,10 +888,19 @@
           "SearchImagesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SearchImagesLambdaVersionV1IOtFsOqYfJNlVOlLqvnhbVrMdfNkfIMgdfvjti940"
+              "Ref": "SearchImagesLambdaVersioncEqixXZVOjpCLSCj2dg4zRdRCWhUoQzKefxkTobEA"
             },
             "Export": {
               "Name": "sls-ai-image-gallery-dev-SearchImagesLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetGalleryImagesLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetGalleryImagesLambdaVersiongMiBtlTtrOXK7vxvISuOHmRpD65osBO4ngqCoDomeTA"
+            },
+            "Export": {
+              "Name": "sls-ai-image-gallery-dev-GetGalleryImagesLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -818,7 +1062,7 @@
         "timeout": 6,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "GenerateImageLambdaVersion3joDZL1hPgGrabsE4IxJ3D2y8GUURQIvQBvL5CkKs"
+        "versionLogicalId": "GenerateImageLambdaVersionQWjmXzBbHg2MOTWYwT5CwIhPMM6L4Hclb48R9DKcn9w"
       },
       "searchImages": {
         "handler": "handler.searchImages",
@@ -856,7 +1100,45 @@
         "timeout": 6,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "SearchImagesLambdaVersionV1IOtFsOqYfJNlVOlLqvnhbVrMdfNkfIMgdfvjti940"
+        "versionLogicalId": "SearchImagesLambdaVersioncEqixXZVOjpCLSCj2dg4zRdRCWhUoQzKefxkTobEA"
+      },
+      "getGalleryImages": {
+        "handler": "handler.getGalleryImages",
+        "events": [
+          {
+            "http": {
+              "path": "images",
+              "method": "get",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ai-image-gallery-dev-getGalleryImages",
+        "package": {
+          "artifact": ".serverless\\ai-image-gallery.zip"
+        },
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs20.x",
+        "vpc": {},
+        "versionLogicalId": "GetGalleryImagesLambdaVersiongMiBtlTtrOXK7vxvISuOHmRpD65osBO4ngqCoDomeTA"
       }
     },
     "resources": {
@@ -864,7 +1146,27 @@
         "ImageBucket": {
           "Type": "AWS::S3::Bucket",
           "Properties": {
-            "BucketName": "ai-image-gallery-dev-ad-visual"
+            "BucketName": "ai-image-gallery-dev-ad-visual",
+            "CorsConfiguration": {
+              "CorsRules": [
+                {
+                  "AllowedHeaders": [
+                    "*"
+                  ],
+                  "AllowedMethods": [
+                    "GET",
+                    "PUT",
+                    "POST",
+                    "DELETE",
+                    "HEAD"
+                  ],
+                  "AllowedOrigins": [
+                    "https://main3.dhtmpsa6cbgbg.amplifyapp.com"
+                  ],
+                  "MaxAge": 3000
+                }
+              ]
+            }
           }
         },
         "ImageTable": {
@@ -875,12 +1177,34 @@
               {
                 "AttributeName": "id",
                 "AttributeType": "S"
+              },
+              {
+                "AttributeName": "createdAt",
+                "AttributeType": "N"
               }
             ],
             "KeySchema": [
               {
                 "AttributeName": "id",
                 "KeyType": "HASH"
+              }
+            ],
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "createdAt-index",
+                "KeySchema": [
+                  {
+                    "AttributeName": "id",
+                    "KeyType": "HASH"
+                  },
+                  {
+                    "AttributeName": "createdAt",
+                    "KeyType": "RANGE"
+                  }
+                ],
+                "Projection": {
+                  "ProjectionType": "ALL"
+                }
               }
             ],
             "BillingMode": "PAY_PER_REQUEST"
@@ -913,7 +1237,7 @@
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/ai-image-gallery/dev/1728834557457-2024-10-13T15:49:17.457Z",
+    "artifactDirectoryName": "serverless/ai-image-gallery/dev/1729225120356-2024-10-18T04:18:40.356Z",
     "artifact": ""
   }
 }
