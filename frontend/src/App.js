@@ -124,18 +124,18 @@ function App() {
   return (
     <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
       <Container maxW="container.xl">
-        <VStack spacing={8}>
-          <Flex width="100%" justifyContent="center" alignItems="center">
-            <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
-              AI Image Gallery
-            </Heading>
-            <IconButton
-              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              onClick={toggleColorMode}
-              aria-label="Toggle color mode"
-              className="hover:rotate-12 transition-transform duration-300"
-            />
-          </Flex>
+        <Flex width="100%" justifyContent="center" alignItems="center" position="relative" mb={8}>
+          <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
+            AI Image Gallery
+          </Heading>
+          <IconButton
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            onClick={toggleColorMode}
+            aria-label="Toggle color mode"
+            className="hover:rotate-12 transition-transform duration-300 absolute right-0 top-1/2 transform -translate-y-1/2"
+          />
+        </Flex>
+        
           
           <Tabs isFitted variant="enclosed" width="100%">
             <TabList mb="1em">
@@ -240,7 +240,6 @@ function App() {
               </TabPanel>
             </TabPanels>
           </Tabs>
-        </VStack>
       </Container>
     </Box>
   );
