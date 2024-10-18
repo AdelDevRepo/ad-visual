@@ -52,70 +52,74 @@ function App() {
       const response = await axios.post(`${API_URL}/generate`, { prompt });
       setGeneratedImage(response.data.imageUrl);
       toast({
-        title: 'Image generated successfully',
-        status: 'success',
+        title: "Image generated successfully",
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error('Error generating image:', error);
       toast({
-        title: 'Error generating image',
-        description: err.response?.data?.message || 'An unexpected error occurred',
-        status: 'error',
+        title: "Error generating image",
+        description: error.message,
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsGenerating(false);
     }
-    setIsGenerating(false);
   };
 
-  const fetchGalleryImages = async (reset = false) => {
+  const fetchGalleryImages = async (isNewSearch = false) => {
     setIsLoading(true);
-    const cacheKey = `gallery_${searchTerm}_${lastEvaluatedKey}`;
-    const cachedImages = getFromCache(cacheKey);
-
-    if (cachedImages && !reset) {
-      setGalleryImages(prevImages => [...prevImages, ...cachedImages]);
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const response = await axios.get(`${API_URL}/gallery`, {
-        params: {
-          limit: 20,
-          lastEvaluatedKey: reset ? null : lastEvaluatedKey,
-          term: searchTerm,
-        }
-      });
-      const newImages = response.data.items;
-      setGalleryImages(prevImages => reset ? newImages : [...prevImages, ...newImages]);
-      setLastEvaluatedKey(response.data.lastEvaluatedKey);
-      setHasMore(response.data.hasMore);
-      setInCache(cacheKey, newImages);
-    } catch (err) {
-      console.error(err);
+      const cacheKey = `gallery_${searchTerm}_${isNewSearch ? '0' : lastEvaluatedKey}`;
+      const cachedData = getFromCache(cacheKey);
+
+      if (cachedData) {
+        setGalleryImages(isNewSearch ? cachedData.images : [...galleryImages, ...cachedData.images]);
+        setLastEvaluatedKey(cachedData.lastEvaluatedKey);
+        setHasMore(cachedData.hasMore);
+      } else {
+        const response = await axios.get(`${API_URL}/images`, {
+          params: {
+            searchTerm,
+            lastEvaluatedKey: isNewSearch ? undefined : lastEvaluatedKey,
+          },
+        });
+        const newImages = response.data.images;
+        setGalleryImages(isNewSearch ? newImages : [...galleryImages, ...newImages]);
+        setLastEvaluatedKey(response.data.lastEvaluatedKey);
+        setHasMore(response.data.hasMore);
+
+        setInCache(cacheKey, {
+          images: newImages,
+          lastEvaluatedKey: response.data.lastEvaluatedKey,
+          hasMore: response.data.hasMore,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching gallery images:', error);
       toast({
-        title: 'Error fetching images',
-        description: 'An unexpected error occurred while fetching images',
-        status: 'error',
+        title: "Error fetching images",
+        description: error.message,
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+  };
+
+  const loadMoreImages = () => {
+    fetchGalleryImages();
   };
 
   useEffect(() => {
     fetchGalleryImages(true);
-  }, [searchTerm]);
-
-  const loadMoreImages = () => {
-    if (hasMore) {
-      fetchGalleryImages();
-    }
-  };
+  }, []);
 
   return (
     <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text, useColorModeValue, AspectRatio } from '@chakra-ui/react';
+import { Box, Image, SimpleGrid, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Text, useColorModeValue } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -32,25 +32,23 @@ const ImageGallery = ({ images }) => {
               transition={{ duration: 0.3 }}
               onClick={() => handleImageClick(image)}
               cursor="pointer"
-              className="group"
+              className="group relative overflow-hidden rounded-lg"
+              height="0"
+              paddingBottom="100%"
             >
-              <AspectRatio ratio={1}>
-                <Box className="relative overflow-hidden rounded-lg">
-                  <LazyLoadImage
-                    src={image.imageUrl}
-                    alt={image.prompt}
-                    effect="blur"
-                    width="100%"
-                    height="100%"
-                    className="object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <Box
-                    className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity duration-300 flex items-end justify-center opacity-0 group-hover:opacity-100"
-                  >
-                    <Text className="text-white text-sm p-2 text-center">{image.prompt}</Text>
-                  </Box>
+              <Box className="absolute inset-0">
+                <LazyLoadImage
+                  src={image.imageUrl}
+                  alt={image.prompt}
+                  effect="blur"
+                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                />
+                <Box
+                  className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity duration-300 flex items-end justify-center opacity-0 group-hover:opacity-100"
+                >
+                  <Text className="text-white text-sm p-2 text-center">{image.prompt}</Text>
                 </Box>
-              </AspectRatio>
+              </Box>
             </MotionBox>
           ))}
         </AnimatePresence>
