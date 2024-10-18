@@ -122,135 +122,117 @@ function App() {
   }, []);
 
   return (
-    <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
-      <Container maxW="container.xl">
-        <VStack spacing={8} align="stretch">
-          <Flex width="100%" justifyContent="space-between" alignItems="center" mb={8}>
-            <Box flex="1" />
-            <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
-              AI Image Gallery
-            </Heading>
-            <Flex flex="1" justifyContent="flex-end">
-              <IconButton
-                icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-                onClick={toggleColorMode}
-                aria-label="Toggle color mode"
-                className="hover:rotate-12 transition-transform duration-300"
-              />
-            </Flex>
-          </Flex>
-          
-          <Tabs isFitted variant="enclosed" width="100%">
-            <TabList mb="1em">
-              <Tab className="hover:bg-opacity-80 transition-colors duration-300">Generate Image</Tab>
-              <Tab className="hover:bg-opacity-80 transition-colors duration-300">Image Gallery</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <MotionBox
-                  width="100%"
-                  bg={cardBgColor}
-                  p={[4, 6]}
-                  borderRadius="md"
-                  boxShadow="md"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="backdrop-filter backdrop-blur-lg bg-opacity-30"
+    <div className={`min-h-screen py-8 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex-1" />
+          <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
+            AI Image Gallery
+          </h1>
+          <div className="flex-1 flex justify-end">
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+            >
+              {darkMode ? <SunIcon className="w-6 h-6" /> : <MoonIcon className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <div className="flex space-x-2">
+            <button
+              className={`px-4 py-2 rounded-t-lg ${activeTab === 'generate' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => setActiveTab('generate')}
+            >
+              Generate Image
+            </button>
+            <button
+              className={`px-4 py-2 rounded-t-lg ${activeTab === 'gallery' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => setActiveTab('gallery')}
+            >
+              Image Gallery
+            </button>
+          </div>
+        </div>
+
+        <MotionDiv
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`p-6 rounded-lg shadow-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
+        >
+          {activeTab === 'generate' && (
+            <div className="space-y-4">
+              <div className="flex space-x-2">
+                <div className="relative flex-1">
+                  <label className="absolute left-10 top-0.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:top-0.5 peer-focus:text-gray-600 peer-focus:text-sm">
+                    Enter a prompt
+                  </label>
+                  <Input
+                    placeholder="Enter a prompt to generate an image"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    flex={1}
+                    className="peer placeholder-transparent pt-4"
+                  />
+                  <SearchIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+                <button
+                  onClick={generateImage}
+                  disabled={isGenerating || !prompt}
+                  className={`px-4 py-2 rounded-md bg-blue-500 text-white ${isGenerating || !prompt ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
                 >
-                  <VStack spacing={4} align="stretch">
-                    <Stack spacing={4} direction={["column", "row"]} width="100%">
-                      <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                          <SearchIcon color="gray.300" />
-                        </InputLeftElement>
-                        <Input
-                          placeholder="Enter a prompt to generate an image"
-                          value={prompt}
-                          onChange={(e) => setPrompt(e.target.value)}
-                          flex={1}
-                          className="peer placeholder-transparent"
-                        />
-                        <label className="absolute left-10 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">
-                          Enter a prompt
-                        </label>
-                      </InputGroup>
-                      <Button 
-                        onClick={generateImage} 
-                        colorScheme="blue" 
-                        isLoading={isGenerating} 
-                        loadingText="Generating"
-                        isDisabled={!prompt}
-                        className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                      >
-                        Generate
-                      </Button>
-                    </Stack>
-                    {isGenerating && <Spinner />}
-                    {generatedImage && (
-                      <Image src={generatedImage} alt="Generated image" maxH="300px" objectFit="contain" className="rounded-lg shadow-xl" />
-                    )}
-                  </VStack>
-                </MotionBox>
-              </TabPanel>
-              <TabPanel>
-                <MotionBox
-                  width="100%"
-                  bg={cardBgColor}
-                  p={[4, 6]}
-                  borderRadius="md"
-                  boxShadow="md"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="backdrop-filter backdrop-blur-lg bg-opacity-30"
+                  {isGenerating ? 'Generating...' : 'Generate'}
+                </button>
+              </div>
+              {isGenerating && <div className="text-center">Generating image...</div>}
+              {generatedImage && (
+                <img src={generatedImage} alt="Generated image" className="max-h-[300px] object-contain mx-auto rounded-lg shadow-xl" />
+              )}
+            </div>
+          )}
+
+          {activeTab === 'gallery' && (
+            <div className="space-y-4">
+              <div className="flex space-x-2">
+                <div className="relative flex-1">
+                  <label className="absolute left-10 top-0.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:top-0.5 peer-focus:text-gray-600 peer-focus:text-sm">
+                    Search images
+                  </label>
+                  <Input
+                    placeholder="Search images"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    flex={1}
+                    className="peer placeholder-transparent pt-4"
+                  />
+                  <SearchIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+                <button
+                  onClick={() => fetchGalleryImages(true)}
+                  className="p-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
                 >
-                  <VStack spacing={4} align="stretch">
-                    <Stack spacing={4} direction={["column", "row"]} width="100%">
-                      <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                          <SearchIcon color="gray.300" />
-                        </InputLeftElement>
-                        <Input
-                          placeholder="Search images"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          flex={1}
-                          className="peer placeholder-transparent pl-10"
-                        />
-                        <label className="absolute left-10 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">
-                          Search images
-                        </label>
-                      </InputGroup>
-                      <IconButton
-                        aria-label="Search images"
-                        icon={<SearchIcon />}
-                        onClick={() => fetchGalleryImages(true)}
-                        className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                      />
-                    </Stack>
-                    <Box width="100%">
-                      <ImageGallery images={galleryImages} />
-                    </Box>
-                    {hasMore && (
-                      <Button
-                        onClick={loadMoreImages}
-                        isLoading={isLoading}
-                        loadingText="Loading"
-                        colorScheme="blue"
-                        className="hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                      >
-                        Show More
-                      </Button>
-                    )}
-                  </VStack>
-                </MotionBox>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </VStack>
-      </Container>
-    </Box>
+                  <SearchIcon className="w-6 h-6" />
+                </button>
+              </div>
+              <ImageGallery images={galleryImages} darkMode={darkMode} />
+              {hasMore && (
+                <div className="text-center">
+                  <button
+                    onClick={loadMoreImages}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md bg-blue-500 text-white ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
+                  >
+                    {isLoading ? 'Loading...' : 'Show More'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </MotionDiv>
+      </div>
+    </div>
   );
 }
 
