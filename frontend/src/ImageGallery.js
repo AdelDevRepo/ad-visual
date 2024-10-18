@@ -43,11 +43,6 @@ const ImageGallery = ({ images }) => {
                   effect="blur"
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
                 />
-                <Box
-                  className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity duration-300 flex items-end justify-center opacity-0 group-hover:opacity-100"
-                >
-                  <Text className="text-white text-sm p-2 text-center">{image.prompt}</Text>
-                </Box>
               </Box>
             </MotionBox>
           ))}
