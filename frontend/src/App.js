@@ -125,7 +125,7 @@ function App() {
     <Box minHeight="100vh" bg={bgColor} py={8} className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
       <Container maxW="container.xl">
         <VStack spacing={8}>
-          <Flex width="100%" justifyContent="space-between" alignItems="center">
+          <Flex width="100%" justifyContent="center" alignItems="center">
             <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
               AI Image Gallery
             </Heading>
