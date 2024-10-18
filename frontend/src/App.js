@@ -49,7 +49,10 @@ function App() {
   const generateImage = async () => {
     setIsGenerating(true);
     try {
-      const response = await axios.post(`${API_URL}/generate`, { prompt });
+      const response = await axios.post(`${API_URL}/generate`, { prompt }, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
+      });
       setGeneratedImage(response.data.imageUrl);
       toast({
         title: "Image generated successfully",
@@ -61,7 +64,7 @@ function App() {
       console.error('Error generating image:', error);
       toast({
         title: "Error generating image",
-        description: error.message,
+        description: error.response?.data?.message || error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -78,32 +81,29 @@ function App() {
       const cachedData = getFromCache(cacheKey);
 
       if (cachedData) {
-        setGalleryImages(isNewSearch ? cachedData.images : [...galleryImages, ...cachedData.images]);
+        setGalleryImages(isNewSearch ? cachedData.items : [...galleryImages, ...cachedData.items]);
         setLastEvaluatedKey(cachedData.lastEvaluatedKey);
         setHasMore(cachedData.hasMore);
       } else {
         const response = await axios.get(`${API_URL}/images`, {
           params: {
-            searchTerm,
+            term: searchTerm,
             lastEvaluatedKey: isNewSearch ? undefined : lastEvaluatedKey,
           },
+          withCredentials: true
         });
-        const newImages = response.data.images;
+        const newImages = response.data.items;
         setGalleryImages(isNewSearch ? newImages : [...galleryImages, ...newImages]);
         setLastEvaluatedKey(response.data.lastEvaluatedKey);
         setHasMore(response.data.hasMore);
 
-        setInCache(cacheKey, {
-          images: newImages,
-          lastEvaluatedKey: response.data.lastEvaluatedKey,
-          hasMore: response.data.hasMore,
-        });
+        setInCache(cacheKey, response.data);
       }
     } catch (error) {
       console.error('Error fetching gallery images:', error);
       toast({
         title: "Error fetching images",
-        description: error.message,
+        description: error.response?.data?.message || error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -141,6 +141,7 @@ function App() {
             <TabList mb="1em">
               <Tab className="hover:bg-opacity-80 transition-colors duration-300">Generate Image</Tab>
               <Tab className="hover:bg-opacity-80 transition-colors duration-300">Image Gallery</Tab>
+            
             </TabList>
             <TabPanels>
               <TabPanel>
