@@ -127,9 +127,11 @@ function App() {
         <VStack spacing={8} align="stretch">
           <Flex width="100%" justifyContent="space-between" alignItems="center" mb={8}>
             <Box flex="1" />
+            <VStack spacing={12}>
             <Heading as="h1" size={["xl", "2xl"]} className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
               AI Image Gallery
             </Heading>
+            </VStack>
             <Flex flex="1" justifyContent="flex-end">
               <IconButton
                 icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
